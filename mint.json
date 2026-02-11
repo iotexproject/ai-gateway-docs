@@ -54,14 +54,9 @@
       "pages": [
         "code-examples/javascript-nodejs",
         "code-examples/python",
-        "code-examples/other-languages"
-      ]
-    },
-    {
-      "group": "Advanced Usage",
-      "pages": [
-        "advanced-usage/streaming-response-handling",
-        "advanced-usage/error-handling-and-retry-mechanisms"
+        "code-examples/other-languages",
+        "code-examples/streaming",
+        "code-examples/error-handling"
       ]
     },
     {

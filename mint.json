@@ -60,12 +60,8 @@
     {
       "group": "Advanced Usage",
       "pages": [
-        "advanced-usage/concurrent-request-optimization",
-        "advanced-usage/smart-conversation-management",
-        "advanced-usage/cost-optimization-strategies",
-        "advanced-usage/error-handling-and-retry-mechanisms",
-        "advanced-usage/prompt-engineering",
-        "advanced-usage/streaming-response-handling"
+        "advanced-usage/streaming-response-handling",
+        "advanced-usage/error-handling-and-retry-mechanisms"
       ]
     },
     {

@@ -3,8 +3,6 @@ title: "Cost Optimization Strategies"
 description: "Reduce API costs with intelligent caching, token management, and prompt optimization"
 ---
 
-# Cost Optimization Strategies
-
 Optimizing API usage costs while maintaining performance and quality is crucial for scalable AI applications. This guide provides comprehensive strategies for reducing costs through intelligent caching, efficient request patterns, and smart resource management.
 
 ## Smart Caching System
@@ -425,7 +423,7 @@ class PromptOptimizer:
             compressed_content = self.compress_prompt(msg["content"])
             compressed_msg = {**msg, "content": compressed_content}
             
-            optimized.insert(-1 if optimized and optimized[0]["role"] == "system" else 0, compressed_msg)
+            optimized.insert(1 if optimized and optimized[0]["role"] == "system" else 0, compressed_msg)
             current_tokens += estimate_tokens(compressed_content)
         
         return optimized

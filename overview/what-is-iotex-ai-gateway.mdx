@@ -3,6 +3,36 @@ title: "What is IoTeX AI Gateway"
 description: "A unified AI model interface service for accessing multiple mainstream AI models through a single API"
 ---
 
-# What is IoTeX AI Gateway
+IoTeX AI Gateway is a unified AI model interface service that allows you to access multiple mainstream AI models — including Gemini, DeepSeek, Llama, Qwen, and more — through a single OpenAI-compatible API.
 
-IoTeX AI Gateway provides a unified AI model interface service that allows you to access multiple mainstream AI models including GPT, Claude, Gemini, and more through a single API. No need to register with individual AI service providers separately - one interface handles all your needs.
+<CardGroup cols={2}>
+  <Card title="Single API, Many Models" icon="layer-group">
+    No need to register with individual AI providers. One endpoint, one API key — access every supported model instantly.
+  </Card>
+  <Card title="OpenAI-Compatible" icon="plug">
+    Uses the standard OpenAI API format. Drop in your existing OpenAI SDK code and just change the base URL and API key.
+  </Card>
+  <Card title="Built on IoTeX" icon="shield-check">
+    Powered by IoTeX's decentralized infrastructure for transparent, verifiable AI inference with on-chain attestation.
+  </Card>
+  <Card title="Start in Minutes" icon="rocket">
+    Get an API key, make a request, and see a response — all in under 5 minutes.
+  </Card>
+</CardGroup>
+
+## How It Works
+
+1. You send a request to `https://gateway.iotex.ai/v1/chat/completions` using any OpenAI-compatible client
+2. IoTeX AI Gateway routes your request to the specified model provider
+3. The response is returned in standard OpenAI format
+
+```bash
+curl https://gateway.iotex.ai/v1/chat/completions \
+  -H "Authorization: Bearer your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "gemini-2.5-flash", "messages": [{"role": "user", "content": "Hello!"}]}'
+```
+
+<Note>
+IoTeX AI Gateway is fully compatible with the OpenAI SDK. Any library or tool that supports the OpenAI API format can be used with zero code changes — just update the base URL and API key.
+</Note>

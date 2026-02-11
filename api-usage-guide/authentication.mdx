@@ -3,16 +3,47 @@ title: "Authentication"
 description: "How to authenticate your API requests"
 ---
 
-# Authentication
+All API requests require authentication using a Bearer token in the `Authorization` header.
 
-Include your API key in the header for each request:
+## Getting Your API Key
+
+Visit the [Gateway Console](https://gateway.iotex.ai/console/token) to generate your API key. Keys are in the format `sk-xxxxxxxxxx`.
+
+## Using Your API Key
+
+Include the `Authorization` header in every request:
 
 ```http
-Authorization: Bearer your-api-key
+Authorization: Bearer sk-your-api-key-here
 ```
 
-Make sure to:
+### Example with cURL
 
-- Keep your API key secure and never expose it in client-side code
-- Use environment variables to store your API key in production
-- Rotate your API key regularly for security
+```bash
+curl https://gateway.iotex.ai/v1/chat/completions \
+  -H "Authorization: Bearer sk-your-api-key-here" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "gemini-2.5-flash", "messages": [{"role": "user", "content": "Hello"}]}'
+```
+
+### Example with OpenAI SDK
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-your-api-key-here",
+    base_url="https://gateway.iotex.ai/v1"
+)
+```
+
+## Security Best Practices
+
+<Warning>
+Never expose your API key in client-side code (browser JavaScript, mobile apps, etc.). Always route requests through a backend server.
+</Warning>
+
+- **Use environment variables** to store your API key — never hardcode it in source files
+- **Rotate your key** regularly through the [Gateway Console](https://gateway.iotex.ai/console/token)
+- **Use separate keys** for different environments (development, staging, production)
+- **Monitor usage** in the console to detect any unauthorized access

@@ -3,31 +3,27 @@ title: "Model Selection"
 description: "Frequently asked questions about choosing and comparing AI models"
 ---
 
-# Model Selection
+<AccordionGroup>
+  <Accordion title="How do I choose the right AI model?">
+    The best model depends on your use case. You can browse the full list on the [Supported AI Models](/overview/supported-ai-models) page, or call the `GET /v1/models` endpoint to get the current list programmatically.
 
-## Q: How do I choose the right AI model?
+    As a starting point, `gemini-2.5-flash` offers a good balance of speed and quality for most tasks.
+  </Accordion>
 
-A: Available models:
+  <Accordion title="How do different models compare in response speed?">
+    Response speed varies based on model size, task complexity, and server load. Smaller models (e.g., `google/gemma-3-12b-it`) tend to respond faster, while larger models (e.g., `Qwen/Qwen3-235B-A22B-Instruct-2507`) provide more capable responses. We recommend benchmarking with your specific use cases to find the best fit.
+  </Accordion>
 
-- deepseek-ai/DeepSeek-V3-0324
-- Qwen/Qwen3-30B-A3B
-- deepseek-ai/DeepSeek-R1-0528
-- Qwen/Qwen3-Coder-480B-A35B-Instruct
-- zai-org/GLM-4.5
-- openai/gpt-oss-120b
-- google/gemma-3-12b-it
-- mistralai/Mistral-Nemo-Instruct-2407
-- Qwen/Qwen3-235B-A22B-Instruct-2507
-- meta-llama/Llama-3.3-70B-Instruct
-- google/gemma-3-27b-it
-- moonshotai/Kimi-K2-Instruct-0905
-- openai/gpt-oss-20b
-- meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8
+  <Accordion title="How can I check which models are available?">
+    Call the `GET /v1/models` endpoint to get a real-time list of all available models:
 
-## Q: How do different models compare in response speed?
+    ```bash
+    curl https://gateway.iotex.ai/v1/models \
+      -H "Authorization: Bearer your-api-key"
+    ```
+  </Accordion>
 
-A: Model response speed varies based on factors like model size, complexity, and server load. We recommend testing with your specific use cases to determine the best performing models for your needs. Actual speed may vary based on network and load conditions.
-
-## Q: How can I check which models are supported?
-
-A: Call the `GET /v1/models` endpoint to get a list of all currently available models.
+  <Accordion title="Can I switch models without changing my code?">
+    Yes. Since all models use the same OpenAI-compatible API format, switching models is as simple as changing the `model` parameter in your request. No other code changes are needed.
+  </Accordion>
+</AccordionGroup>

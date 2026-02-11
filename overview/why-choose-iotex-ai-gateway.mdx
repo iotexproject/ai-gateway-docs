@@ -3,10 +3,42 @@ title: "Why Choose IoTeX AI Gateway"
 description: "Key benefits of using IoTeX AI Gateway for your AI applications"
 ---
 
-# Why Choose IoTeX AI Gateway
+<CardGroup cols={2}>
+  <Card title="Simple & Easy" icon="code">
+    Fully compatible with the OpenAI API format. Migrate existing projects with zero code changes — just update the base URL and API key.
+  </Card>
+  <Card title="Rich Model Selection" icon="brain">
+    Access models from leading AI providers including Google, DeepSeek, Meta, Qwen, Mistral, and more. Call the `/v1/models` endpoint to see the full list.
+  </Card>
+  <Card title="Stable & Reliable" icon="server">
+    Intelligent load balancing and automatic failover ensure high availability and consistent performance.
+  </Card>
+  <Card title="Cost Optimized" icon="coins">
+    Transparent pricing with no hidden fees. Compare models and choose the best cost-performance ratio for your use case.
+  </Card>
+  <Card title="Secure" icon="lock">
+    Enterprise-grade security architecture with encrypted data transmission, API key authentication, and privacy protection.
+  </Card>
+  <Card title="Decentralized Infrastructure" icon="network-wired">
+    Built on IoTeX's decentralized network, providing transparent and verifiable AI inference with on-chain attestation.
+  </Card>
+</CardGroup>
 
-- **Simple & Easy**: Fully compatible with OpenAI API format, migrate existing projects with zero code changes
-- **Rich Model Selection**: Access 50+ models from 20+ AI service providers to meet different scenario requirements
-- **Stable & Reliable**: Intelligent load balancing and automatic failover ensure service stability
-- **Cost Optimized**: Transparent pricing with no hidden fees, helping you optimize AI usage costs
-- **Secure**: Enterprise-grade security architecture with encrypted data transmission and privacy protection
+## OpenAI SDK Compatibility
+
+If you're already using the OpenAI SDK, switching to IoTeX AI Gateway takes two lines of code:
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="your-iotex-api-key",          # Replace with your IoTeX API key
+    base_url="https://gateway.iotex.ai/v1"  # Point to IoTeX AI Gateway
+)
+
+# Everything else stays the same
+response = client.chat.completions.create(
+    model="gemini-2.5-flash",
+    messages=[{"role": "user", "content": "Hello!"}]
+)
+```

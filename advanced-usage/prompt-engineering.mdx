@@ -3,8 +3,6 @@ title: "Prompt Engineering"
 description: "Techniques for crafting effective prompts including templates, chain-of-thought, and few-shot learning"
 ---
 
-# Prompt Engineering
-
 ## Prompt Engineering Techniques
 
 Effective prompt engineering is crucial for getting optimal results from AI models. Well-structured prompts lead to more accurate, relevant, and useful responses.
@@ -231,53 +229,7 @@ classification_prompt = classifier.build_prompt(
 
 ### Context Window Management
 
-```python
-def manage_context_window(messages, max_tokens=4000):
-    """
-    Intelligently manage conversation context to ensure it doesn't exceed model limits
-    """
-    def estimate_tokens(text):
-        # Simple estimation: 1 token ~ 4 characters (Chinese) or 0.75 words (English)
-        return len(text) // 3
-
-    total_tokens = sum(estimate_tokens(msg["content"]) for msg in messages)
-
-    if total_tokens <= max_tokens:
-        return messages
-
-    # Preserve system messages and recent conversations
-    result = []
-    current_tokens = 0
-
-    # First preserve system messages
-    if messages and messages[0]["role"] == "system":
-        result.append(messages[0])
-        current_tokens += estimate_tokens(messages[0]["content"])
-        messages = messages[1:]
-
-    # Preserve from the latest messages backward
-    for msg in reversed(messages):
-        msg_tokens = estimate_tokens(msg["content"])
-        if current_tokens + msg_tokens > max_tokens:
-            break
-        result.insert(-1 if result and result[0]["role"] == "system" else 0, msg)
-        current_tokens += msg_tokens
-
-    return result
-
-# Usage example
-long_conversation = [
-    {"role": "system", "content": "You are a programming assistant"},
-    {"role": "user", "content": "What is Python?" * 100},  # Very long message
-    {"role": "assistant", "content": "Python is..." * 100},
-    {"role": "user", "content": "How to learn Python?"},
-    {"role": "assistant", "content": "Steps to learn Python..."}
-]
-
-optimized_messages = manage_context_window(long_conversation, max_tokens=1000)
-print(f"Original message count: {len(long_conversation)}")
-print(f"Optimized message count: {len(optimized_messages)}")
-```
+When building prompts for multi-turn conversations, you need to manage the context window to avoid exceeding model token limits. For a complete implementation of context window management, see [Smart Conversation Management](/advanced-usage/smart-conversation-management).
 
 ### Dynamic Prompt Optimization
 

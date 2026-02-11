@@ -3,49 +3,51 @@ title: "Error Handling"
 description: "Frequently asked questions about handling API errors"
 ---
 
-# Error Handling
+<AccordionGroup>
+  <Accordion title="What does a 401 error mean?">
+    A `401 Unauthorized` error means authentication failed. Check that:
 
-## Q: What to do when encountering a 401 error?
+    1. Your API key is correct
+    2. The header format is `Authorization: Bearer your-api-key`
+    3. Your key has not been deactivated or rotated
+  </Accordion>
 
-A: 401 indicates authentication failure, please check:
+  <Accordion title="What does a 429 error mean?">
+    A `429 Too Many Requests` error means you're sending requests too frequently. Solutions:
 
-1. Whether the API key is correct
-2. Header format: `Authorization: Bearer your-api-key`
-3. Whether the key has expired or been deactivated
+    1. Reduce your request frequency
+    2. Implement exponential backoff retry logic (see example below)
+    3. Contact support if you need higher rate limits
+  </Accordion>
 
-## Q: What to do when encountering a 429 error?
+  <Accordion title="What does a 500 error mean?">
+    A `500 Internal Server Error` indicates a server-side issue. Steps to take:
 
-A: 429 indicates too frequent requests, solutions:
+    1. Wait a moment and retry the request
+    2. Verify your request parameters are valid
+    3. If the error persists, contact support with your request details
+  </Accordion>
 
-1. Reduce request frequency
-2. Implement retry mechanism (exponential backoff recommended)
-3. Contact technical support if you need higher rate limits
+  <Accordion title="How should I implement request retries?">
+    Use exponential backoff with random jitter to avoid overwhelming the server:
 
-## Q: What to do when encountering a 500 error?
+    ```python
+    import time
+    import random
 
-A: 500 indicates server error, please:
+    def api_call_with_retry(func, max_retries=3):
+        for attempt in range(max_retries):
+            try:
+                return func()
+            except Exception as e:
+                if attempt == max_retries - 1:
+                    raise e
 
-1. Retry later
-2. Check if request parameters are correct
-3. If it persists, contact technical support and provide request details
+                # Exponential backoff + random jitter
+                wait_time = (2 ** attempt) + random.uniform(0, 1)
+                time.sleep(wait_time)
+    ```
 
-## Q: How to implement request retry?
-
-A: Recommended retry strategy:
-
-```python
-import time
-import random
-
-def api_call_with_retry(func, max_retries=3):
-    for attempt in range(max_retries):
-        try:
-            return func()
-        except Exception as e:
-            if attempt == max_retries - 1:
-                raise e
-
-            # Exponential backoff + random jitter
-            wait_time = (2 ** attempt) + random.uniform(0, 1)
-            time.sleep(wait_time)
-```
+    For more advanced retry strategies, see [Error Handling and Retry Mechanisms](/advanced-usage/error-handling-and-retry-mechanisms).
+  </Accordion>
+</AccordionGroup>

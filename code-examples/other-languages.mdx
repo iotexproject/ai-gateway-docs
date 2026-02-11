@@ -1,9 +1,7 @@
 ---
 title: "Other Language Examples"
-description: "Java, Go, PHP, and LangChain integration examples"
+description: "Java, Go, and PHP integration examples"
 ---
-
-# Other Language Examples
 
 ## Java
 
@@ -86,7 +84,7 @@ import (
     "bytes"
     "encoding/json"
     "fmt"
-    "io/ioutil"
+    "io"
     "net/http"
 )
 
@@ -153,7 +151,7 @@ func (c *AIClient) Chat(prompt, model string) (string, error) {
     }
     defer resp.Body.Close()
 
-    body, err := ioutil.ReadAll(resp.Body)
+    body, err := io.ReadAll(resp.Body)
     if err != nil {
         return "", err
     }
@@ -216,7 +214,7 @@ class AIClient {
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -239,7 +237,7 @@ class AIClient {
         curl_setopt($ch, CURLOPT_URL, $this->baseUrl . '/v1/models');
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 
         $response = curl_exec($ch);
         curl_close($ch);
@@ -266,35 +264,6 @@ try {
 ?>
 ```
 
-## Framework Integration
-
-### LangChain Integration
-
-```python
-from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage, SystemMessage
-
-# Initialize LangChain OpenAI client
-llm = ChatOpenAI(
-    model="gemini-2.5-flash",
-    openai_api_key="your-api-key",
-    openai_api_base="https://gateway.iotex.ai/v1",
-    temperature=0.7
-)
-
-# Simple call
-response = llm.invoke([HumanMessage(content="Explain what large language models are")])
-print(response.content)
-
-# System prompt + user message
-messages = [
-    SystemMessage(content="You are a professional technical documentation writer"),
-    HumanMessage(content="Write an API documentation template")
-]
-response = llm.invoke(messages)
-print(response.content)
-```
-
 <Note>
-Full code examples for Java, Go, and PHP include proper error handling, request building, and response parsing.
+For Python and LangChain examples, see the [Python Examples](/code-examples/python) page.
 </Note>

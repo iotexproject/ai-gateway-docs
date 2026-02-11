@@ -3,8 +3,6 @@ title: "Error Handling and Retry Mechanisms"
 description: "Build reliable applications with smart retry strategies, circuit breakers, and graceful degradation"
 ---
 
-# Error Handling and Retry Mechanisms
-
 Robust error handling is essential for building reliable applications that interact with AI APIs. This guide covers comprehensive strategies for handling various error scenarios and implementing intelligent retry mechanisms.
 
 ## Smart Retry Strategy
@@ -69,7 +67,7 @@ def api_call():
         'https://gateway.iotex.ai/v1/chat/completions',
         headers={'Authorization': 'Bearer your-api-key'},
         json={
-            'model': 'gpt-3.5-turbo',
+            'model': 'gemini-2.5-flash',
             'messages': [{'role': 'user', 'content': 'Hello'}]
         },
         timeout=10
@@ -226,7 +224,7 @@ def make_ai_request():
     response = requests.post(
         'https://gateway.iotex.ai/v1/chat/completions',
         headers={'Authorization': 'Bearer your-api-key'},
-        json={'model': 'gpt-3.5-turbo', 'messages': [{'role': 'user', 'content': 'Hello'}]},
+        json={'model': 'gemini-2.5-flash', 'messages': [{'role': 'user', 'content': 'Hello'}]},
         timeout=10
     )
     response.raise_for_status()
@@ -351,7 +349,7 @@ class GracefulAIClient:
         self.retry_handler = SmartRetryHandler()
         self.error_handler = APIErrorHandler()
         
-    def chat_with_fallback(self, messages, model="gpt-3.5-turbo"):
+    def chat_with_fallback(self, messages, model="gemini-2.5-flash"):
         """Chat with automatic fallback strategies"""
         
         # Strategy 1: Try primary API with retry
@@ -369,10 +367,10 @@ class GracefulAIClient:
                     print(f"Fallback API also failed: {e2}")
             
             # Strategy 3: Try simpler model
-            if model != "gpt-3.5-turbo":
+            if model != "gemini-2.5-flash":
                 try:
                     print("Trying simpler model...")
-                    return self._make_request(self.primary_api_key, messages, "gpt-3.5-turbo")
+                    return self._make_request(self.primary_api_key, messages, "gemini-2.5-flash")
                 except Exception as e3:
                     print(f"Simpler model also failed: {e3}")
             

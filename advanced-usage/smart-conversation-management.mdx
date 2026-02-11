@@ -3,8 +3,6 @@ title: "Smart Conversation Management"
 description: "Manage multi-turn conversations, context windows, and conversation history"
 ---
 
-# Smart Conversation Management
-
 Effective conversation management is crucial for maintaining context, optimizing token usage, and providing seamless multi-turn interactions with AI models.
 
 ## Conversation History Management
@@ -108,9 +106,9 @@ def manage_context_window(messages, max_tokens=4000):
         msg_tokens = estimate_tokens(msg["content"])
         if current_tokens + msg_tokens > max_tokens:
             break
-        result.insert(-1 if result and result[0]["role"] == "system" else 0, msg)
+        result.insert(1 if result and result[0]["role"] == "system" else 0, msg)
         current_tokens += msg_tokens
-    
+
     return result
 
 # Usage example
@@ -132,6 +130,8 @@ print(f"Optimized message count: {len(optimized_messages)}")
 ### Message Filtering and Summarization
 
 ```python
+import time
+
 class AdvancedConversationManager(ConversationManager):
     def __init__(self, api_key, base_url, system_prompt=None, max_history=20):
         super().__init__(api_key, base_url, system_prompt)

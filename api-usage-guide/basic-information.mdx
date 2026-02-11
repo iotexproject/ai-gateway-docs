@@ -3,9 +3,59 @@ title: "Basic Information"
 description: "API endpoint, version, and data format details"
 ---
 
-# Basic Information
+## Base Configuration
 
-- **Endpoint URL**: `https://gateway.iotex.ai`
-- **API Version**: v1
-- **Data Format**: JSON
-- **Character Encoding**: UTF-8
+| Setting | Value |
+|---------|-------|
+| **Base URL** | `https://gateway.iotex.ai` |
+| **API Version** | `v1` |
+| **Data Format** | JSON |
+| **Character Encoding** | UTF-8 |
+| **Protocol** | HTTPS (TLS 1.2+) |
+
+## Full Endpoint URLs
+
+| API | Method | URL |
+|-----|--------|-----|
+| Chat Completions | `POST` | `https://gateway.iotex.ai/v1/chat/completions` |
+| List Models | `GET` | `https://gateway.iotex.ai/v1/models` |
+
+## Request Headers
+
+Every request must include the following headers:
+
+```http
+Authorization: Bearer your-api-key
+Content-Type: application/json
+```
+
+## OpenAI SDK Configuration
+
+Since IoTeX AI Gateway is OpenAI-compatible, you can use the official OpenAI SDK by pointing it to the gateway:
+
+<CodeGroup>
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="your-api-key",
+    base_url="https://gateway.iotex.ai/v1"
+)
+```
+
+```javascript JavaScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+    apiKey: "your-api-key",
+    baseURL: "https://gateway.iotex.ai/v1"
+});
+```
+
+```bash cURL
+curl https://gateway.iotex.ai/v1/chat/completions \
+  -H "Authorization: Bearer your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "gemini-2.5-flash", "messages": [{"role": "user", "content": "Hello"}]}'
+```
+</CodeGroup>

@@ -3,11 +3,10 @@ title: "Python Examples"
 description: "Python code examples for IoTeX AI Gateway"
 ---
 
-# Python Examples
-
 ## Method 1: Using OpenAI SDK (Recommended)
 
 ```python
+# Install dependency: pip install openai
 from openai import OpenAI
 
 # Initialize client
@@ -68,11 +67,10 @@ if __name__ == "__main__":
     stream_chat("Explain basic concepts of machine learning")
 ```
 
-## Method 2: Using requests library
+## Method 2: Using requests Library
 
 ```python
 import requests
-import json
 
 class AIClient:
     def __init__(self, api_key, base_url="https://gateway.iotex.ai"):
@@ -120,4 +118,32 @@ response = client.chat([
     {"role": "user", "content": "Hello, introduce yourself"}
 ])
 print(response['choices'][0]['message']['content'])
+```
+
+## LangChain Integration
+
+```python
+# Install dependency: pip install langchain-openai
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage, SystemMessage
+
+# Initialize LangChain with IoTeX AI Gateway
+llm = ChatOpenAI(
+    model="gemini-2.5-flash",
+    openai_api_key="your-api-key",
+    openai_api_base="https://gateway.iotex.ai/v1",
+    temperature=0.7
+)
+
+# Simple call
+response = llm.invoke([HumanMessage(content="Explain what large language models are")])
+print(response.content)
+
+# System prompt + user message
+messages = [
+    SystemMessage(content="You are a professional technical documentation writer"),
+    HumanMessage(content="Write an API documentation template")
+]
+response = llm.invoke(messages)
+print(response.content)
 ```

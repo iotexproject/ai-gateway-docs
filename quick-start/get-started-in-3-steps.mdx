@@ -3,58 +3,74 @@ title: "Get Started in 3 Steps"
 description: "Set up your first API call in minutes"
 ---
 
-# Get Started in 3 Steps
+<Steps>
+  <Step title="Get Your API Key">
+    Visit the [Gateway Console](https://gateway.iotex.ai/console/token) to generate your API key in the format `sk-xxxxxxxxxx`.
+  </Step>
 
-## Step 1: Get Your API Key
+  <Step title="Make Your First API Call">
+    <CodeGroup>
+    ```bash cURL
+    curl https://gateway.iotex.ai/v1/chat/completions \
+      -H "Authorization: Bearer your-api-key" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "gemini-2.5-flash",
+        "messages": [{"role": "user", "content": "Hello"}],
+        "max_tokens": 100
+      }'
+    ```
 
-Obtain your exclusive API key in the format: `sk-xxxxxxxxxx` on [gateway.iotex.ai/console/token](https://gateway.iotex.ai/console/token)
+    ```python Python
+    from openai import OpenAI
 
-## Step 2: Make Your First API Call
+    client = OpenAI(
+        api_key="your-api-key",
+        base_url="https://gateway.iotex.ai/v1"
+    )
 
-**Simplest method using curl**:
+    response = client.chat.completions.create(
+        model="gemini-2.5-flash",
+        messages=[{"role": "user", "content": "Hello"}],
+        max_tokens=100
+    )
+    print(response.choices[0].message.content)
+    ```
 
-```bash
-curl https://gateway.iotex.ai/v1/chat/completions \
-  -H "Authorization: Bearer your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gemini-2.5-flash",
-    "messages": [{"role": "user", "content": "Hello"}],
-    "max_tokens": 100
-  }'
-```
+    ```javascript JavaScript
+    import OpenAI from "openai";
 
-**Python version**:
+    const client = new OpenAI({
+        apiKey: "your-api-key",
+        baseURL: "https://gateway.iotex.ai/v1"
+    });
 
-```python
-import requests
+    const response = await client.chat.completions.create({
+        model: "gemini-2.5-flash",
+        messages: [{ role: "user", content: "Hello" }],
+        max_tokens: 100
+    });
+    console.log(response.choices[0].message.content);
+    ```
+    </CodeGroup>
+  </Step>
 
-response = requests.post(
-    'https://gateway.iotex.ai/v1/chat/completions',
-    headers={'Authorization': 'Bearer your-api-key'},
-    json={
-        'model': 'gemini-2.5-flash',
-        'messages': [{'role': 'user', 'content': 'Hello'}]
-    }
-)
-print(response.json()['choices'][0]['message']['content'])
-```
+  <Step title="View the Response">
+    A successful call returns the AI's response in standard OpenAI format:
 
-## Step 3: View the Response
-
-A successful call will return the AI's response:
-
-```json
-{
-  "choices": [
+    ```json
     {
-      "message": {
-        "role": "assistant",
-        "content": "Hello! I'm an AI assistant, and I'm happy to help you. What can I do for you today?"
-      }
+      "choices": [
+        {
+          "message": {
+            "role": "assistant",
+            "content": "Hello! I'm an AI assistant, and I'm happy to help you. What can I do for you today?"
+          }
+        }
+      ]
     }
-  ]
-}
-```
+    ```
+  </Step>
+</Steps>
 
-**Congratulations! You've successfully integrated IoTeX AI Gateway**
+**Congratulations! You've successfully integrated IoTeX AI Gateway.**

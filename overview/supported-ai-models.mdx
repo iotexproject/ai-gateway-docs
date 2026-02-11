@@ -3,23 +3,51 @@ title: "Supported AI Models"
 description: "List of AI models available through IoTeX AI Gateway"
 ---
 
-# Supported AI Models
+IoTeX AI Gateway provides access to models from multiple leading AI providers. The model list is updated regularly as new models become available.
 
-IoTeX AI Gateway supports the following AI models:
+## Available Models
 
-- deepseek-ai/DeepSeek-V3-0324
-- Qwen/Qwen3-30B-A3B
-- deepseek-ai/DeepSeek-R1-0528
-- Qwen/Qwen3-Coder-480B-A35B-Instruct
-- zai-org/GLM-4.5
-- openai/gpt-oss-120b
-- google/gemma-3-12b-it
-- mistralai/Mistral-Nemo-Instruct-2407
-- Qwen/Qwen3-235B-A22B-Instruct-2507
-- meta-llama/Llama-3.3-70B-Instruct
-- google/gemma-3-27b-it
-- moonshotai/Kimi-K2-Instruct-0905
-- openai/gpt-oss-20b
-- meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8
+| Model | Provider |
+|-------|----------|
+| `gemini-2.5-flash` | Google |
+| `google/gemma-3-12b-it` | Google |
+| `google/gemma-3-27b-it` | Google |
+| `deepseek-ai/DeepSeek-V3-0324` | DeepSeek |
+| `deepseek-ai/DeepSeek-R1-0528` | DeepSeek |
+| `Qwen/Qwen3-30B-A3B` | Qwen |
+| `Qwen/Qwen3-235B-A22B-Instruct-2507` | Qwen |
+| `Qwen/Qwen3-Coder-480B-A35B-Instruct` | Qwen |
+| `meta-llama/Llama-3.3-70B-Instruct` | Meta |
+| `meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8` | Meta |
+| `mistralai/Mistral-Nemo-Instruct-2407` | Mistral |
+| `moonshotai/Kimi-K2-Instruct-0905` | Moonshot |
+| `zai-org/GLM-4.5` | Zhipu AI |
+| `openai/gpt-oss-20b` | OpenAI |
+| `openai/gpt-oss-120b` | OpenAI |
 
-You can get the complete list of available models by calling the `/v1/models` endpoint.
+<Note>
+This list may not reflect the latest additions. Call the `/v1/models` endpoint for the real-time list of available models.
+</Note>
+
+## Query Models Programmatically
+
+```bash
+curl https://gateway.iotex.ai/v1/models \
+  -H "Authorization: Bearer your-api-key"
+```
+
+The response includes model metadata:
+
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "gemini-2.5-flash",
+      "object": "model",
+      "created": 1677858242,
+      "owned_by": "google"
+    }
+  ]
+}
+```

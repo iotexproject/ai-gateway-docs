@@ -72,10 +72,12 @@ Run `openclaw config edit` or edit `~/.openclaw/openclaw.json` directly. Add the
 Replace `sk-xxxxxxxxxx` with your API key from the [Gateway Console](https://gateway.iotex.ai/console/token).
 
 <Tip>
-You can also use `openclaw config patch` to merge changes without editing the full file:
+You can also use `openclaw config set` to set individual values without editing the full file:
 
 ```bash
-openclaw config patch '{"models":{"providers":{"iotex":{"baseUrl":"https://gateway.iotex.ai/v1","apiKey":"sk-xxxxxxxxxx","api":"openai-completions","models":[{"id":"gemini-2.5-flash-lite"}]}}}}'
+openclaw config set models.providers.iotex.baseUrl "https://gateway.iotex.ai/v1"
+openclaw config set models.providers.iotex.apiKey "sk-xxxxxxxxxx"
+openclaw config set models.providers.iotex.api "openai-completions"
 ```
 </Tip>
 

@@ -22,10 +22,25 @@ LLM_MODELS=(
 )
 
 AUDIO_MODELS=(
-  "openai/whisper-large-v3-turbo|Whisper Large V3 Turbo (fast)|\$0.0015/min"
-  "openai/whisper-large-v3|Whisper Large V3 (standard)|\$0.0030/min"
-  "whisper-1|Whisper 1 (legacy)|\$0.0060/min"
+  "openai/whisper-large-v3-turbo|Whisper Large V3 Turbo (fast)|OpenAI|\$0.0015/min"
+  "openai/whisper-large-v3|Whisper Large V3 (standard)|OpenAI|\$0.0030/min"
+  "whisper-1|Whisper 1 (legacy)|OpenAI|\$0.0060/min"
 )
+
+# ── Collect known model IDs for validation ───────────────────────────
+known_llm_ids() {
+  for entry in "${LLM_MODELS[@]}"; do
+    IFS='|' read -r id _ <<< "$entry"
+    echo "$id"
+  done
+}
+
+known_audio_ids() {
+  for entry in "${AUDIO_MODELS[@]}"; do
+    IFS='|' read -r id _ <<< "$entry"
+    echo "$id"
+  done
+}
 
 # ── Parse args ────────────────────────────────────────────────────────
 API_KEY=""
@@ -58,7 +73,7 @@ pick_from_menu() {
   echo "$prompt"
   echo ""
   for i in "${!options[@]}"; do
-    IFS='|' read -r id name provider price <<< "${options[$i]}"
+    IFS='|' read -r id name _provider price <<< "${options[$i]}"
     local num=$((i + 1))
     local marker=""
     if [ "$num" -eq 1 ]; then marker=" (recommended)"; fi
@@ -119,6 +134,21 @@ if [ -z "$AUDIO_MODEL" ]; then
   AUDIO_MODEL="$PICKED_ID"
 fi
 
+# ── Validate model names ────────────────────────────────────────────
+if ! known_llm_ids | grep -qxF "$LLM_MODEL"; then
+  echo "Error: Unknown LLM model '$LLM_MODEL'."
+  echo "Supported models:"
+  known_llm_ids | sed 's/^/  - /'
+  exit 1
+fi
+
+if ! known_audio_ids | grep -qxF "$AUDIO_MODEL"; then
+  echo "Error: Unknown audio model '$AUDIO_MODEL'."
+  echo "Supported models:"
+  known_audio_ids | sed 's/^/  - /'
+  exit 1
+fi
+
 if [ "$SET_DEFAULT" = false ] && [ -t 0 ]; then
   echo ""
   if ask_yes_no "  Set iotex/$LLM_MODEL as your default model?" "n"; then
@@ -144,17 +174,17 @@ if [ ! -f "$CONFIG" ]; then
   exit 1
 fi
 
-# ── Apply config (deep merge via node) ───────────────────────────────
+# ── Apply config (deep merge via node, reads key from env) ───────────
 echo ""
 echo "==> Updating openclaw.json..."
 
-node -e '
+IOTEX_SETUP_KEY="$API_KEY" node -e '
 const fs = require("fs");
 const configPath = process.argv[1];
-const apiKey     = process.argv[2];
-const llmModel   = process.argv[3];
-const audioModel = process.argv[4];
-const setDefault = process.argv[5] === "true";
+const apiKey     = process.env.IOTEX_SETUP_KEY;
+const llmModel   = process.argv[2];
+const audioModel = process.argv[3];
+const setDefault = process.argv[4] === "true";
 
 const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
 
@@ -227,7 +257,7 @@ if (idx >= 0) {
 }
 
 fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n");
-' "$CONFIG" "$API_KEY" "$LLM_MODEL" "$AUDIO_MODEL" "$SET_DEFAULT"
+' "$CONFIG" "$LLM_MODEL" "$AUDIO_MODEL" "$SET_DEFAULT"
 
 # ── Set up auth profile credentials ─────────────────────────────────
 echo "==> Setting up auth profile..."
@@ -235,20 +265,26 @@ AGENT_DIR="$OPENCLAW_DIR/agents/main/agent"
 mkdir -p "$AGENT_DIR"
 AUTH_FILE="$AGENT_DIR/auth-profiles.json"
 
-node -e '
+IOTEX_SETUP_KEY="$API_KEY" node -e '
 const fs = require("fs");
 const file = process.argv[1];
-const key  = process.argv[2];
+const key  = process.env.IOTEX_SETUP_KEY;
 let store = { version: 1, profiles: {} };
 try { store = JSON.parse(fs.readFileSync(file, "utf-8")); } catch {}
 store.profiles = store.profiles || {};
 store.profiles["iotex:default"] = { type: "api_key", provider: "iotex", key };
 fs.writeFileSync(file, JSON.stringify(store, null, 2) + "\n");
-' "$AUTH_FILE" "$API_KEY"
+' "$AUTH_FILE"
 
 # ── Restart ──────────────────────────────────────────────────────────
 echo "==> Restarting gateway..."
-openclaw gateway restart 2>/dev/null || true
+if ! openclaw gateway restart 2>/dev/null; then
+  echo ""
+  echo "  Warning: Gateway restart failed. Run manually:"
+  echo "    openclaw gateway restart"
+  echo ""
+  exit 1
+fi
 sleep 3
 
 echo ""

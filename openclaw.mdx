@@ -1,162 +1,286 @@
 ---
-title: "🦞 OpenClaw"
-description: "Build powerful AI agents using OpenClaw with IoTeX AI Gateway"
+title: "OpenClaw"
+description: "Connect OpenClaw AI agents to IoTeX AI Gateway for LLM and audio transcription"
 ---
 
-[OpenClaw](https://openclaw.ai) is an open-source AI agent framework for building autonomous AI assistants. Connect it to IoTeX AI Gateway to access all supported models through a unified interface.
+[OpenClaw](https://openclaw.ai) is an open-source, self-hosted AI assistant that connects to messaging apps (Telegram, WhatsApp, Discord, Slack, etc.) and performs autonomous tasks. Connect it to IoTeX AI Gateway to use models like Gemini 2.5 Flash Lite for chat and Whisper for voice message transcription.
 
+## Quick Setup (Ask Your Agent)
 
-## Switching to IoTeX AI Gateway?
-
-If you already have OpenClaw running with a different model provider, just ask the agent:
+If you already have OpenClaw running, just tell your agent:
 
 ```
-Add gateway.iotex.ai as an OpenAI-compatible LLM provider and set
-gemini-2.5-flash-lite as my default model. 
-Docs: https://docs.iotex.ai/. 
-API key is sk-xxxxxxxxxx
+Add gateway.iotex.ai as an OpenAI-compatible LLM provider with API key sk-xxxxxxxxxx.
+Use "openai-completions" as the API type and "iotex" as the provider name.
+Set the base URL to https://gateway.iotex.ai/v1.
+Add gemini-2.5-flash-lite as an available model.
+Docs: https://docs.iotex.ai/
 ```
 
-The agent will pick up and start from there. 
+Get your API key from the [Gateway Console](https://gateway.iotex.ai/console/token) first.
 
-## New to OpenClaw?
+<Warning>
+For audio transcription, **do not** rely on the agent to configure it automatically. The media understanding system requires a specific provider mapping. Follow the [Audio Transcription](#audio-transcription) section below for manual setup.
+</Warning>
 
-<Steps>
-  <Step title="Install OpenClaw">
-    ```bash
-    npm install -g openclaw
-    ```
-  </Step>
+## Manual Setup
 
-  <Step title="Configure IoTeX AI Gateway">
-    ```bash
-    openclaw config edit
-    ```
+### 1. Add IoTeX as a Provider
 
-    Add the following to your `models` section:
+Run `openclaw config edit` or edit `~/.openclaw/openclaw.json` directly. Add the IoTeX provider under `models.providers`:
 
-    ```json
-    {
-      "models": {
-        "providers": [
+```json
+{
+  "models": {
+    "providers": {
+      "iotex": {
+        "baseUrl": "https://gateway.iotex.ai/v1",
+        "apiKey": "sk-xxxxxxxxxx",
+        "api": "openai-completions",
+        "models": [
           {
-            "id": "iotex",
-            "name": "IoTeX AI Gateway",
-            "baseURL": "https://gateway.iotex.ai/v1",
-            "apiKeyEnv": "IOTEX_API_KEY",
-            "type": "openai-compatible"
+            "id": "gemini-2.5-flash-lite",
+            "name": "Gemini 2.5 Flash Lite (via IoTeX)",
+            "reasoning": false,
+            "input": ["text"],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 200000,
+            "maxTokens": 8192
           }
-        ],
-        "aliases": {
-          "gemini-flash": "iotex/gemini-2.5-flash",
-          "deepseek": "iotex/deepseek-chat",
-          "qwen": "iotex/qwen-2.5-14b-instruct"
-        }
+        ]
       }
     }
-    ```
-  </Step>
-
-  <Step title="Set Your API Key">
-    Get your API key from the [Gateway Console](https://gateway.iotex.ai/console/token):
-
-    ```bash
-    export IOTEX_API_KEY="sk-xxxxxxxxxx"
-    ```
-  </Step>
-
-  <Step title="Start Chatting">
-    ```bash
-    # Use a specific IoTeX model
-    openclaw chat --model iotex/gemini-2.5-flash "Explain React hooks"
-
-    # Use an alias
-    openclaw chat --model deepseek "Write a quicksort in Python"
-
-    # Interactive session with model switching
-    openclaw chat -i
-    ```
-  </Step>
-</Steps>
-
-## Advanced Configuration
-
-### Route Tasks to Different Models
-
-```javascript
-// In your OpenClaw agent configuration
-{
-  "thinking": {
-    "default": "iotex/deepseek-reasoner",
-    "fast": "iotex/gemini-2.5-flash"
-  },
-  "vision": "iotex/gemini-2.0-flash-exp",
-  "coding": "iotex/qwen-coder-turbo"
+  }
 }
 ```
 
-### Programmatic Usage (Node.js)
+Replace `sk-xxxxxxxxxx` with your API key from the [Gateway Console](https://gateway.iotex.ai/console/token).
 
-```javascript
-import { OpenClaw } from 'openclaw';
+<Tip>
+You can also use `openclaw config patch` to merge changes without editing the full file:
 
-const agent = new OpenClaw({
-  model: 'iotex/gemini-2.5-flash',
-  apiKey: process.env.IOTEX_API_KEY,
-  baseURL: 'https://gateway.iotex.ai/v1'
-});
+```bash
+openclaw config patch '{"models":{"providers":{"iotex":{"baseUrl":"https://gateway.iotex.ai/v1","apiKey":"sk-xxxxxxxxxx","api":"openai-completions","models":[{"id":"gemini-2.5-flash-lite"}]}}}}'
+```
+</Tip>
 
-const response = await agent.chat('Explain neural networks');
-console.log(response);
+### 2. Set as Default or Fallback Model
 
-// Streaming
-await agent.chat('Write a story about AI', {
-  stream: true,
-  onChunk: (chunk) => process.stdout.write(chunk)
-});
+To use IoTeX as your **primary** model:
+
+```json
+{
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "iotex/gemini-2.5-flash-lite"
+      }
+    }
+  }
+}
 ```
 
-## Model Selection Guide
+Or as a **fallback** alongside another provider:
 
-| Task | Recommended Model | Alias |
-|------|------------------|-------|
-| Quick Q&A | `gemini-2.5-flash` | `gemini-flash` |
-| Complex reasoning | `deepseek-reasoner` | `deepseek` |
-| Chinese conversations | `qwen-2.5-14b-instruct` | `qwen` |
-| Code generation | `qwen-coder-turbo` | - |
-| Vision tasks | `gemini-2.0-flash-exp` | - |
+```json
+{
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "anthropic/claude-sonnet-4-5",
+        "fallbacks": ["iotex/gemini-2.5-flash-lite"]
+      }
+    }
+  }
+}
+```
+
+### 3. Add a Model Alias (Optional)
+
+Give the model a short name for easy switching in chat:
+
+```json
+{
+  "agents": {
+    "defaults": {
+      "models": {
+        "iotex/gemini-2.5-flash-lite": {
+          "alias": "gemini-lite"
+        }
+      }
+    }
+  }
+}
+```
+
+Now you can switch models in Telegram/WhatsApp with `/model gemini-lite`.
+
+### 4. Verify
+
+```bash
+openclaw gateway restart
+openclaw gateway health
+```
+
+## Audio Transcription
+
+OpenClaw can automatically transcribe voice messages (from Telegram, WhatsApp, etc.) using IoTeX-hosted Whisper models.
+
+<Note>
+OpenClaw's media understanding system only recognizes built-in provider names (`openai`, `groq`, `google`, `anthropic`, `minimax`, `deepgram`) for audio transcription. Since the IoTeX gateway is OpenAI-compatible, you must configure it to route through the `openai` provider with the IoTeX base URL.
+</Note>
+
+### Step 1: Set Up the Auth Profile
+
+OpenClaw needs an auth profile for IoTeX. Add this to `~/.openclaw/openclaw.json`:
+
+```json
+{
+  "auth": {
+    "profiles": {
+      "iotex:default": {
+        "provider": "iotex",
+        "mode": "api_key"
+      }
+    }
+  }
+}
+```
+
+Then add the actual API key to `~/.openclaw/agents/main/agent/auth-profiles.json`:
+
+```json
+{
+  "version": 1,
+  "profiles": {
+    "iotex:default": {
+      "type": "api_key",
+      "provider": "iotex",
+      "key": "sk-xxxxxxxxxx"
+    }
+  }
+}
+```
+
+<Warning>
+The field must be `"key"`, not `"apiKey"`. Using the wrong field name will silently fail to authenticate.
+</Warning>
+
+### Step 2: Configure Audio Transcription
+
+Add the audio model config to `~/.openclaw/openclaw.json`:
+
+```json
+{
+  "tools": {
+    "media": {
+      "audio": {
+        "enabled": true,
+        "models": [
+          {
+            "provider": "openai",
+            "model": "openai/whisper-large-v3-turbo",
+            "baseUrl": "https://gateway.iotex.ai/v1",
+            "profile": "iotex:default",
+            "type": "provider"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+Key fields explained:
+
+| Field | Value | Why |
+|-------|-------|-----|
+| `provider` | `"openai"` | Routes through OpenClaw's built-in OpenAI-compatible transcription handler. **Do not** use `"iotex"` here. |
+| `model` | `"openai/whisper-large-v3-turbo"` | The Whisper model ID on IoTeX gateway. |
+| `baseUrl` | `"https://gateway.iotex.ai/v1"` | Overrides the default OpenAI URL to point to IoTeX. |
+| `profile` | `"iotex:default"` | Uses the IoTeX auth profile for the API key. |
+
+### Step 3: Restart and Test
+
+```bash
+openclaw gateway restart
+```
+
+Send a voice message to your OpenClaw bot on Telegram. The bot will automatically transcribe the audio and respond to its content.
+
+### Available Whisper Models
+
+| Model | Speed | Price/min |
+|-------|-------|----------:|
+| `openai/whisper-large-v3-turbo` | Fast | $0.0015 |
+| `openai/whisper-large-v3` | Standard | $0.0030 |
+| `whisper-1` | Legacy | $0.0060 |
+
+## Available Models
+
+See the full list of models available through IoTeX AI Gateway on the [Supported Models](/supported-models) page. Popular choices for OpenClaw:
+
+| Model | Best For |
+|-------|----------|
+| `gemini-2.5-flash-lite` | Low-cost general chat, fast responses |
+| `gemini-2.5-flash` | Balanced quality and speed |
+| `deepseek-ai/DeepSeek-V3-0324` | Complex reasoning |
+| `Qwen/Qwen3-30B-A3B` | Chinese language, general tasks |
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="API key not found error">
-    Make sure your API key is set correctly:
+  <Accordion title="Audio transcription not working">
+    The most common cause is using `"provider": "iotex"` in the audio model config. OpenClaw's media understanding only recognizes `openai`, `groq`, `google`, `anthropic`, `minimax`, `deepgram`. Use `"provider": "openai"` with `baseUrl` pointing to IoTeX instead.
+
+    Also check:
+    - The auth profile uses `"key"` (not `"apiKey"`) in `auth-profiles.json`
+    - `tools.media.audio.enabled` is `true`
+    - Run `openclaw gateway restart` after config changes
+  </Accordion>
+
+  <Accordion title="Model not found">
+    Verify the model name matches the [supported models](/supported-models) list. Model names are case-sensitive.
 
     ```bash
-    echo $IOTEX_API_KEY
-
-    # If empty, set it
-    export IOTEX_API_KEY="sk-xxxxxxxxxx"
+    # Check available models
+    curl https://gateway.iotex.ai/v1/models \
+      -H "Authorization: Bearer sk-xxxxxxxxxx"
     ```
   </Accordion>
 
-  <Accordion title="Model not available">
-    Verify the model name matches the [supported models](/supported-models) list:
+  <Accordion title="Gateway not picking up config changes">
+    OpenClaw watches `openclaw.json` for changes, but some changes (like auth profiles or audio config) require a full restart:
 
     ```bash
-    openclaw models list
-    openclaw chat --model iotex/gemini-2.5-flash "Hello"
+    openclaw gateway restart
+    openclaw gateway health
     ```
   </Accordion>
 
-  <Accordion title="Rate limiting">
-    OpenClaw automatically retries with exponential backoff. For high-volume usage, consider using faster models for simple tasks or upgrading your IoTeX plan.
+  <Accordion title="API key not working">
+    Check that the key is set in the correct location. OpenClaw resolves API keys in this order:
+
+    1. Auth profile specified by `profile` field
+    2. Auth profiles in `~/.openclaw/agents/main/agent/auth-profiles.json`
+    3. Environment variable (e.g., `IOTEX_API_KEY`)
+    4. `apiKey` in `models.providers.iotex` config
+
+    Verify with:
+    ```bash
+    openclaw gateway health
+    ```
   </Accordion>
 </AccordionGroup>
 
 ## Resources
 
-- [Supported models](/supported-models)
-- [OpenClaw documentation](https://docs.openclaw.ai)
-- [OpenClaw community](https://discord.com/invite/clawd)
-- [Example agents on ClawHub](https://clawhub.com)
+- [Supported Models](/supported-models)
+- [OpenClaw Documentation](https://docs.openclaw.ai)
+- [OpenClaw GitHub](https://github.com/openclaw/openclaw)
+- [IoTeX AI Gateway Console](https://gateway.iotex.ai/console/token)

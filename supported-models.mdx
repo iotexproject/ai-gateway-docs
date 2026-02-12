@@ -5,13 +5,12 @@ description: "List of AI models available through IoTeX AI Gateway"
 
 IoTeX AI Gateway provides access to models from multiple leading AI providers. The model list is updated regularly as new models become available.
 
-## Available Models (30 models)
+## Text Models (26 models)
 
 Prices are per 1M tokens.
 
 | Model | Provider | Input | Output |
 |-------|----------|------:|-------:|
-| `black-forest-labs/FLUX-1.1-pro` | Black Forest Labs | $0.04/req | - |
 | `deepseek-ai/DeepSeek-R1-0528` | DeepSeek | $0.50 | $2.15 |
 | `deepseek-ai/DeepSeek-V3-0324` | DeepSeek | $0.27 | $0.88 |
 | `gemini-2.5-flash` | Google | $0.30 | $2.50 |
@@ -31,9 +30,6 @@ Prices are per 1M tokens.
 | `openai/gpt-4o-mini` | OpenAI | $0.15 | $0.60 |
 | `openai/gpt-oss-120b` | OpenAI | $0.04 | $0.19 |
 | `openai/gpt-oss-20b` | OpenAI | $0.03 | $0.14 |
-| `openai/whisper-large-v3` | OpenAI | $15.00 | $15.00 |
-| `openai/whisper-large-v3-turbo` | OpenAI | $7.50 | $7.50 |
-| `whisper-1` | OpenAI | $30.00 | $30.00 |
 | `openrouter/sonoma-sky-alpha` | OpenRouter | Free | - |
 | `Qwen/Qwen2.5-7B-Instruct` | Qwen | $0.04 | $0.10 |
 | `Qwen/Qwen3-235B-A22B-Instruct-2507` | Qwen | $0.13 | $0.60 |
@@ -41,6 +37,22 @@ Prices are per 1M tokens.
 | `Qwen/Qwen3-Coder-480B-A35B-Instruct` | Qwen | $0.40 | $1.60 |
 | `x-ai/grok-code-fast-1` | xAI | $0.20 | $1.50 |
 | `zai-org/GLM-5` | ZAI | $0.80 | $2.56 |
+
+## Audio Models (3 models)
+
+Whisper models are billed by audio duration. Tokens are calculated based on audio file length.
+
+| Model | Provider | Price/min | Price/1M tokens |
+|-------|----------|----------:|----------------:|
+| `openai/whisper-large-v3` | OpenAI | $0.0030 | $15.00 |
+| `openai/whisper-large-v3-turbo` | OpenAI | $0.0015 | $7.50 |
+| `whisper-1` | OpenAI | $0.0060 | $30.00 |
+
+## Image Models (1 model)
+
+| Model | Provider | Price/req |
+|-------|----------|----------:|
+| `black-forest-labs/FLUX-1.1-pro` | Black Forest Labs | $0.04 |
 
 <Note>
 This list may not reflect the latest additions. Call the `/v1/models` endpoint for the most up-to-date list.
